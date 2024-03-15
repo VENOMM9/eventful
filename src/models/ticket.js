@@ -24,12 +24,19 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-// Define the schema for the Ticket model
+// Define enum for ticket types
+var TicketType;
+(function (TicketType) {
+    TicketType["VIP"] = "VIP";
+    TicketType["Regular"] = "Regular";
+    TicketType["Premium"] = "Premium";
+    // Add more ticket types as needed
+})(TicketType || (TicketType = {}));
 const ticketSchema = new mongoose_1.Schema({
-    eventId: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Event', required: true },
-    userId: { type: mongoose_1.Schema.Types.ObjectId, ref: 'User', required: true },
-    // Add more fields as needed
+    eventId: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Event' },
+    userId: { type: mongoose_1.Schema.Types.ObjectId, ref: 'User' },
+    ticketType: { type: String, enum: Object.values(TicketType) }, // Define ticket type as enum
+    // Add other fields as needed
 });
-// Create and export the Ticket model
 const TicketModel = mongoose_1.default.model('Ticket', ticketSchema);
 exports.default = TicketModel;

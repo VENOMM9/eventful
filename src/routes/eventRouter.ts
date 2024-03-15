@@ -1,10 +1,11 @@
-// auth.routes.js
 import express from 'express';
+import { postCreateEvent, getAllEvents } from '../controllers/eventController';
+import  authenticateUser   from '../globalmiddleware/auth';
+
+
 const eventRouter = express.Router();
-import eventController from '../controllers/eventController';
 
-eventRouter.post('/createEvent', eventController.createEvent);
-eventRouter.post('/events', eventController.getAllEvents);
+eventRouter.post('/create-event', authenticateUser,  postCreateEvent);
+eventRouter.get('/allevents', getAllEvents);
 
-
-export default  eventRouter ;
+export default eventRouter;

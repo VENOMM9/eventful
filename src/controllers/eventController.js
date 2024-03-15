@@ -8,42 +8,34 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAllEvents = exports.createEvent = void 0;
-const event_1 = __importDefault(require("../models/event"));
-// Controller for handling event-related operations
-// Controller function to create a new event
-const createEvent = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        // Extract event data from request body
-        const eventData = req.body;
-        // Create a new event using the Event model
-        const event = yield event_1.default.create(eventData);
-        // Send a success response with the created event data
-        res.status(201).json({ event });
-    }
-    catch (error) {
-        // Handle errors and send an error response
-        console.error(error);
-        res.status(500).json({ message: 'Internal Server Error' });
-    }
-});
-exports.createEvent = createEvent;
-// Controller function to get all events
-const getAllEvents = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        // Fetch all events from the database
-        const events = yield event_1.default.find();
-        // Send a success response with the fetched events
-        res.status(200).json({ events });
-    }
-    catch (error) {
-        // Handle errors and send an error response
-        console.error(error);
-        res.status(500).json({ message: 'Internal Server Error' });
-    }
-});
+exports.getAllEvents = exports.postCreateEvent = void 0;
+const eventService_1 = require("../services/eventService");
+function postCreateEvent(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const { title, description, date, location } = req.body;
+            const event = yield (0, eventService_1.createEvent)(title, description, date, location); // Assuming createEvent returns the newly created event
+            res.render('eventCreated', { event }); // Assuming 'eventCreated' is the name of your EJS template for displaying the newly created event
+        }
+        catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    });
+}
+exports.postCreateEvent = postCreateEvent;
+function getAllEvents(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const events = yield (0, eventService_1.fetchAllEvents)();
+            res.render('events', { events }); // Assuming 'events' is the name of your EJS template for displaying all events
+        }
+        catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    });
+}
 exports.getAllEvents = getAllEvents;
+exports.default = { postCreateEvent, getAllEvents };

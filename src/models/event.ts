@@ -5,7 +5,7 @@ export interface Event extends Document {
   title: string;
   description: string;
   date: Date;
-  // Add more fields as needed
+  location: string;
 }
 
 // Define the schema for the Event model
@@ -13,7 +13,7 @@ const eventSchema: Schema<Event> = new Schema({
   title: { type: String, required: true },
   description: { type: String, required: true },
   date: { type: Date, required: true },
-  // Add more fields as needed
+  location: { type: String, required: true }
 });
 
 // Create and export the Event model

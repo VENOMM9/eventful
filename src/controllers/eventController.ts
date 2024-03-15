@@ -1,40 +1,25 @@
 import { Request, Response } from 'express';
-import EventModel, { Event } from '../models/event';
+import { createEvent, fetchAllEvents } from '../services/eventService';
 
-// Controller for handling event-related operations
-
-// Controller function to create a new event
-const createEvent = async (req: Request, res: Response) => {
+export async function postCreateEvent(req: Request, res: Response) {
   try {
-    // Extract event data from request body
-    const eventData = req.body;
-
-    // Create a new event using the Event model
-    const event = await EventModel.create(eventData);
-
-    // Send a success response with the created event data
-    res.status(201).json({ event });
+    const { title, description, date, location } = req.body;
+    const event = await createEvent(title, description, date, location); // Assuming createEvent returns the newly created event
+    res.render('eventCreated', { event }); // Assuming 'eventCreated' is the name of your EJS template for displaying the newly created event
   } catch (error) {
-    // Handle errors and send an error response
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error' });
   }
-};
+}
 
-// Controller function to get all events
-const getAllEvents = async (req: Request, res: Response) => {
+export async function getAllEvents(req: Request, res: Response) {
   try {
-    // Fetch all events from the database
-    const events = await EventModel.find();
-
-    // Send a success response with the fetched events
-    res.status(200).json({ events });
+    const events = await fetchAllEvents();
+    res.render('events', { events }); // Assuming 'events' is the name of your EJS template for displaying all events
   } catch (error) {
-    // Handle errors and send an error response
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error' });
   }
-};
+}
 
-// Export the controller functions
-export default { createEvent, getAllEvents };
+export default { postCreateEvent, getAllEvents };

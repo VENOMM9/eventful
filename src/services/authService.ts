@@ -1,32 +1,10 @@
 import userModel from '../models/user';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
+import dotenv from 'dotenv';
+dotenv.config();
 
 class AuthService {
-  public async login(email: string, password: string) {
-    try {
-      const user = await userModel.findOne({ email: email });
-
-      if (!user) {
-        throw new Error("User not found");
-      }
-
-      const validPassword = await bcrypt.compare(password, user.password);
-
-      if (!validPassword) {
-        throw new Error("Invalid password");
-      }
-
-      const token = jwt.sign({ user: user }, process.env.JWT_SECRET!, {
-        expiresIn: "1h",
-      });
-
-      return token;
-    } catch (error) {
-      throw new Error("Authentication failed");
-    }
-  }
-
   public async createUser(
     first_name: string,
     last_name: string,
@@ -51,9 +29,50 @@ class AuthService {
         country: country,
       });
 
-      return user;
+      const token = jwt.sign(
+        { user: { first_name: user.first_name, email: user.email, _id: user._id } },
+        process.env.JWT_SECRET!,
+        { expiresIn: "1h" }
+      );
+
+      return { user, token };
     } catch (error) {
       throw new Error("User creation failed");
+    }
+  }
+
+  public async login(email: string, password: string) {
+    try {
+      const user = await userModel.findOne({ email: email });
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      const validPassword = await bcrypt.compare(password, user.password);
+
+      if (!validPassword) {
+        throw new Error("Invalid password");
+      }
+
+      const token = jwt.sign(
+        { user: { first_name: user.first_name, email: user.email, _id: user._id } },
+        process.env.JWT_SECRET!,
+        { expiresIn: "1h" }
+      );
+
+      return token;
+    } catch (error: any) {
+      throw new Error("Authentication failed" + " " + error.message);
+    }
+  }
+
+  public async getAllUsers() {
+    try {
+      const users = await userModel.find();
+      return users;
+    } catch (error) {
+      throw new Error("Failed to fetch users");
     }
   }
 }

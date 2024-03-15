@@ -12,16 +12,64 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.login = void 0;
 const user_1 = __importDefault(require("../models/user"));
-const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const login = (username, password) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield user_1.default.findOne({ username });
-    if (!user || !bcrypt_1.default.compareSync(password, user.password)) {
-        throw new Error('Invalid credentials');
+const bcrypt_1 = __importDefault(require("bcrypt"));
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
+class AuthService {
+    createUser(first_name, last_name, email, password, country) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const existingUser = yield user_1.default.findOne({ email: email });
+                if (existingUser) {
+                    throw new Error("User already exists");
+                }
+                const hashedPassword = yield bcrypt_1.default.hash(password, 10);
+                const user = yield user_1.default.create({
+                    first_name: first_name,
+                    last_name: last_name,
+                    email: email,
+                    password: hashedPassword,
+                    country: country,
+                });
+                const token = jsonwebtoken_1.default.sign({ user: { first_name: user.first_name, email: user.email, _id: user._id } }, process.env.JWT_SECRET, { expiresIn: "1h" });
+                return { user, token };
+            }
+            catch (error) {
+                throw new Error("User creation failed");
+            }
+        });
     }
-    return jsonwebtoken_1.default.sign({ userId: user._id }, 'secret', { expiresIn: '1h' });
-});
-exports.login = login;
-exports.default = { login: exports.login };
+    login(email, password) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const user = yield user_1.default.findOne({ email: email });
+                if (!user) {
+                    throw new Error("User not found");
+                }
+                const validPassword = yield bcrypt_1.default.compare(password, user.password);
+                if (!validPassword) {
+                    throw new Error("Invalid password");
+                }
+                const token = jsonwebtoken_1.default.sign({ user: { first_name: user.first_name, email: user.email, _id: user._id } }, process.env.JWT_SECRET, { expiresIn: "1h" });
+                return token;
+            }
+            catch (error) {
+                throw new Error("Authentication failed" + " " + error.message);
+            }
+        });
+    }
+    getAllUsers() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const users = yield user_1.default.find();
+                return users;
+            }
+            catch (error) {
+                throw new Error("Failed to fetch users");
+            }
+        });
+    }
+}
+exports.default = new AuthService();

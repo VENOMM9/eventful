@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup</title>
+    <style>
+        .navbar {
+            background-color: #333; /* Set navbar background color */
+            padding: 10px; /* Add padding to navbar */
+        }
+    
+        .nav-list {
+            list-style-type: none; /* Remove default list styles */
+            margin: 0;
+            padding: 0;
+            display: flex; /* Make the list items display horizontally */
+        }
+    
+        .nav-item {
+            margin-right: 20px; /* Add spacing between nav items */
+        }
+    
+        .nav-link {
+            text-decoration: none; /* Remove default underline from links */
+            color: #fff; /* Set link color */
+            font-weight: bold; /* Make link text bold */
+        }
+    
+        .nav-link:hover {
+            color: #ffcc00; /* Change link color on hover */
+        }
+    </style>
+</head>
+<body>
+    
+    
+    <nav class="navbar">
+        <ul class="nav-list">
+            <li class="nav-item"><a href="/" class="nav-link">Home</a></li>
+            <li class="nav-item"><a href="/login" class="nav-link">LOGIN</a></li>
+        </ul>
+    </nav>  <!-- <header><%- include('partials/header') %></header> -->
+
+    <h1>Signup</h1>
+    <form action="/signup" method="POST">
+        <label for="first_name">First Name:</label>
+        <input type="text" id="first_name" name="first_name" required>
+        <br>
+        <!-- Add other fields for last name, email, password, country, etc. -->
+        <button type="submit">Signup</button>
+    </form>
+</body>
+</html>

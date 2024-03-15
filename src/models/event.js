@@ -29,7 +29,7 @@ const eventSchema = new mongoose_1.Schema({
     title: { type: String, required: true },
     description: { type: String, required: true },
     date: { type: Date, required: true },
-    // Add more fields as needed
+    location: { type: String, required: true }
 });
 // Create and export the Event model
 const EventModel = mongoose_1.default.model('Event', eventSchema);

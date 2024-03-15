@@ -12,38 +12,47 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAllTickets = exports.createTicket = void 0;
-const ticket_1 = __importDefault(require("../models/ticket"));
-// Controller for handling ticket-related operations
-// Controller function to create a new ticket
+const ticketService_1 = __importDefault(require("../services/ticketService"));
+const QRCodeGenerator_1 = require("../utils/QRCodeGenerator");
+const eventService_1 = __importDefault(require("../services/eventService"));
+const authService_1 = __importDefault(require("../services/authService")); // Import the userService
 const createTicket = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        // Extract ticket data from request body
-        const ticketData = req.body;
-        // Create a new ticket using the Ticket model
-        const ticket = yield ticket_1.default.create(ticketData);
-        // Send a success response with the created ticket data
-        res.status(201).json({ ticket });
+        // Fetch event and user data from the database
+        const events = yield eventService_1.default.fetchAllEvents();
+        const users = yield authService_1.default.getAllUsers();
+        // Generate a QR code for the ticket
+        const ticketData = {
+            eventId: req.body.eventId,
+            userId: req.body.userId,
+            ticketType: req.body.ticketType,
+            price: req.body.price,
+            quantity: req.body.quantity,
+        };
+        // Generate a unique filename for the QR code
+        const fileName = `ticket_${Date.now()}.png`;
+        // Generate the QR code and save it to a file
+        yield (0, QRCodeGenerator_1.generateQRCode)(JSON.stringify(ticketData), fileName);
+        // Get the URL for the QR code
+        const qrCodeUrl = `/utils/qr_codes/${fileName}`;
+        // Create the ticket in the database
+        const ticket = yield ticketService_1.default.createTicket(ticketData);
+        // Pass event, user, and ticket data to the view for rendering the form
+        return res.render('create-ticket', { events, users, ticket, qrCodeUrl });
     }
     catch (error) {
-        // Handle errors and send an error response
         console.error(error);
-        res.status(500).json({ message: 'Internal Server Error' });
+        res.status(500).json({ message: 'Failed to create ticket' });
     }
 });
-exports.createTicket = createTicket;
-// Controller function to get all tickets
 const getAllTickets = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        // Fetch all tickets from the database
-        const tickets = yield ticket_1.default.find();
-        // Send a success response with the fetched tickets
+        const tickets = yield ticketService_1.default.getAllTickets();
         res.status(200).json({ tickets });
     }
     catch (error) {
-        // Handle errors and send an error response
         console.error(error);
-        res.status(500).json({ message: 'Internal Server Error' });
+        res.status(500).json({ message: 'Failed to fetch tickets' });
     }
 });
-exports.getAllTickets = getAllTickets;
+exports.default = { createTicket, getAllTickets };

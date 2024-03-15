@@ -1,40 +1,53 @@
 import { Request, Response } from 'express';
-import TicketModel, { Ticket } from '../models/ticket';
+import ticketService from '../services/ticketService';
+import { generateQRCode } from '../utils/QRCodeGenerator';
+import path from 'path';
+import eventService from '../services/eventService';
+import userService from '../services/authService'; // Import the userService
 
-// Controller for handling ticket-related operations
-
-// Controller function to create a new ticket
 const createTicket = async (req: Request, res: Response) => {
   try {
-    // Extract ticket data from request body
-    const ticketData = req.body;
+    // Fetch event and user data from the database
+    const events = await eventService.fetchAllEvents();
+    const users = await userService.getAllUsers();
 
-    // Create a new ticket using the Ticket model
-    const ticket = await TicketModel.create(ticketData);
+    // Generate a QR code for the ticket
+    const ticketData = {
+      eventId: req.body.eventId,
+      userId: req.body.userId,
+      ticketType: req.body.ticketType,
+      price: req.body.price,
+      quantity: req.body.quantity,
+    };
 
-    // Send a success response with the created ticket data
-    res.status(201).json({ ticket });
+    // Generate a unique filename for the QR code
+    const fileName = `ticket_${Date.now()}.png`;
+
+    // Generate the QR code and save it to a file
+    await generateQRCode(JSON.stringify(ticketData), fileName);
+
+    // Get the URL for the QR code
+    const qrCodeUrl = `/utils/qr_codes/${fileName}`;
+
+    // Create the ticket in the database
+    const ticket = await ticketService.createTicket(ticketData);
+
+    // Pass event, user, and ticket data to the view for rendering the form
+    return res.render('create-ticket', { events, users, ticket, qrCodeUrl });
   } catch (error) {
-    // Handle errors and send an error response
     console.error(error);
-    res.status(500).json({ message: 'Internal Server Error' });
+    res.status(500).json({ message: 'Failed to create ticket' });
   }
 };
 
-// Controller function to get all tickets
 const getAllTickets = async (req: Request, res: Response) => {
   try {
-    // Fetch all tickets from the database
-    const tickets = await TicketModel.find();
-
-    // Send a success response with the fetched tickets
+    const tickets = await ticketService.getAllTickets();
     res.status(200).json({ tickets });
   } catch (error) {
-    // Handle errors and send an error response
     console.error(error);
-    res.status(500).json({ message: 'Internal Server Error' });
+    res.status(500).json({ message: 'Failed to fetch tickets' });
   }
 };
 
-// Export the controller functions
 export default { createTicket, getAllTickets };

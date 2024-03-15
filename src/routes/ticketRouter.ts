@@ -1,10 +1,11 @@
-// auth.routes.js
 import express from 'express';
-const ticketRouter = express.Router();
 import ticketController from '../controllers/ticketController';
+import authenticateUser from '../globalmiddleware/auth';
+import { validateCreateTicket } from '../middleware/middleware';
 
-ticketRouter.post('/createEvent', ticketController.createTicket);
-ticketRouter.post('/events', ticketController.getAllTickets);
+const ticketRouter = express.Router();
 
+ticketRouter.post('/create-ticket',  ticketController.createTicket);
+ticketRouter.get('/tickets', ticketController.getAllTickets);
 
-export default ticketRouter ;
+export default ticketRouter;

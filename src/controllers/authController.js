@@ -12,56 +12,50 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const authService_1 = __importDefault(require("../services/authService"));
 const user_1 = __importDefault(require("../models/user"));
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const bcrypt_1 = __importDefault(require("bcrypt"));
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = req.body;
     try {
-        const user = yield user_1.default.findOne({
-            email: email,
-        });
-        if (!user) {
-            return res.status(404).redirect("/signup");
-        }
-        const validPassword = yield user.isValidPassword(password);
-        if (!validPassword) {
-            return res.status(302).redirect("/unknown");
-        }
-        const token = jsonwebtoken_1.default.sign({ user: user }, process.env.JWT_SECRET, {
-            expiresIn: "1h",
-        });
+        const token = yield authService_1.default.login(email, password);
         res.cookie("token", token, { httpOnly: true, maxAge: 60 * 60 * 1000 });
-        res.status(200).redirect("/create");
+        // Render a view instead of returning JSON
+        res.render('loginSuccess', { success: true, message: "Login successful", token: token });
     }
     catch (error) {
         console.error(error);
-        res.status(500).send("Internal Server Error");
+        // Render a view for error handling
+        res.render('error', { success: false, message: "Internal Server Error" });
     }
 });
 const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { first_name, last_name, email, password, country } = req.body;
     try {
-        const existingUser = yield user_1.default.findOne({
-            email: email,
-        });
+        const existingUser = yield user_1.default.findOne({ email: email });
         if (existingUser) {
-            return res.redirect("/existinguser");
+            // Render a view for user already existing
+            return res.render('userExists', { success: false, message: "User already exists" });
         }
-        const hashedPassword = yield bcrypt_1.default.hash(password, 10);
-        const user = yield user_1.default.create({
-            first_name: first_name,
-            last_name: last_name,
-            email: email,
-            password: hashedPassword,
-            country: country,
-        });
-        const token = jsonwebtoken_1.default.sign({ first_name: user.first_name, email: user.email, _id: user._id }, process.env.JWT_SECRET);
-        res.status(302).redirect("/login");
+        const { user, token } = yield authService_1.default.createUser(first_name, last_name, email, password, country);
+        console.log("New user created:", user);
+        console.log("Token:", token);
+        // Render a view for successful user creation
+        res.render('userCreated', { success: true, message: "User created successfully" });
     }
     catch (error) {
         console.error(error);
-        res.status(500).send("Internal Server Error");
+        // Render a view for error handling
+        res.render('error', { success: false, message: "Internal Server Error" });
     }
 });
-exports.default = { login, createUser };
+const getAllUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const users = yield authService_1.default.getAllUsers();
+        res.status(200).json({ users });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Failed to fetch users' });
+    }
+});
+exports.default = { login, createUser, getAllUsers };

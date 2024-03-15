@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Event</title>
+    <style>
+        .navbar {
+            background-color: #333; /* Set navbar background color */
+            padding: 10px; /* Add padding to navbar */
+        }
+    
+        .nav-list {
+            list-style-type: none; /* Remove default list styles */
+            margin: 0;
+            padding: 0;
+            display: flex; /* Make the list items display horizontally */
+        }
+    
+        .nav-item {
+            margin-right: 20px; /* Add spacing between nav items */
+        }
+    
+        .nav-link {
+            text-decoration: none; /* Remove default underline from links */
+            color: #fff; /* Set link color */
+            font-weight: bold; /* Make link text bold */
+        }
+    
+        .nav-link:hover {
+            color: #ffcc00; /* Change link color on hover */
+        }
+    </style>
+</head>
+<body>
+    
+    
+    <nav class="navbar">
+        <ul class="nav-list">
+            <li class="nav-item"><a href="/" class="nav-link">Home</a></li>
+            <li class="nav-item"><a href="/create-ticket" class="nav-link">Create-Ticket</a></li>
+
+            <li class="nav-item"><a href="/allevents" class="nav-link">All Events</a></li>
+            <li class="nav-item"><a href="/logout" class="nav-link">Logout</a></li>
+        </ul>
+    </nav>
+    <!-- <header><%- include('partials/header') %></header> -->
+
+    <h1>Create Event</h1>
+    <form action="/create-event" method="POST">
+        <!-- Add fields for event title, description, date, time, location, etc. -->
+        <label for="title">Title:</label><br>
+        <input type="text" id="title" name="title"><br>
+        <label for="description">Description:</label><br>
+        <textarea id="description" name="description"></textarea><br>
+        <label for="date">Date:</label><br>
+        <input type="date" id="date" name="date"><br>
+        <label for="time">Time:</label><br>
+        <input type="time" id="time" name="time"><br>
+        <label for="location">Location:</label><br>
+        <input type="text" id="location" name="location"><br>
+        <button type="submit">Create Event</button>
+    </form>
+</body>
+</html>
