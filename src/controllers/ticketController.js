@@ -45,7 +45,7 @@ const createTicketController = (req, res) => __awaiter(void 0, void 0, void 0, f
         const qrCodeDirectory = path_1.default.join(__dirname, '..', 'public', 'qr_codes');
         const qrCodeFilePath = path_1.default.join(qrCodeDirectory, qrCodeFileName);
         const qrCode = yield (0, QRCodeGenerator_1.generateQRCode)(qrCodeData, qrCodeFilePath);
-        const qrCodeURL = `/public/qr_codes/${qrCodeFileName}`;
+        const qrCodeURL = `/qr_codes/${qrCodeFileName}`;
         console.log(qrCodeFilePath);
         console.log(qrCode);
         console.log(qrCodeData);
