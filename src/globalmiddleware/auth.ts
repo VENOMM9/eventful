@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import userModel from '../models/user';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
-
+dotenv.config();
 // Define a custom type declaration for the user property
 declare global {
     namespace Express {
@@ -13,7 +13,7 @@ declare global {
     }
 }
 
-dotenv.config();
+
 
 const authenticateUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
