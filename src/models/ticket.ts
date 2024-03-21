@@ -11,14 +11,18 @@ enum TicketType {
 export interface Ticket extends Document {
   eventId: mongoose.Types.ObjectId;
   userId: mongoose.Types.ObjectId;
-  ticketType: TicketType; // Define ticket type as enum
+  ticketType: TicketType; 
+  price: number; 
+  quantity: number; // Quantity of tickets
   // Add other fields as needed
 }
 
 const ticketSchema: Schema<Ticket> = new Schema({
   eventId: { type: Schema.Types.ObjectId, ref: 'Event' },
   userId: { type: Schema.Types.ObjectId, ref: 'User' },
-  ticketType: { type: String, enum: Object.values(TicketType)}, // Define ticket type as enum
+  ticketType: { type: String, enum: Object.values(TicketType) }, // Define ticket type as enum
+  price: { type: Number, required: true },
+  quantity: { type: Number, required: true },
   // Add other fields as needed
 });
 

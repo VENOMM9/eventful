@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Ticket</title>
+</head>
+<body>
+    <h1>Update Ticket</h1>
+    <form action="/tickets/<%= ticket._id %>" method="POST">
+        <!-- Assuming you want to update ticket details -->
+        <!-- You can include input fields for each property you want to update -->
+        <!-- Example: -->
+        <label for="ticketName">Ticket Name:</label>
+        <input type="text" id="ticketName" name="ticketName" value="<%= ticket.ticketName %>">
+        <!-- Include other input fields as needed -->
+        <label for="ticketType">Ticket Type:</label>
+        <input type="text" id="ticketType" name="ticketType" value="<%= ticket.ticketType %>">
+        <label for="price">Price:</label>
+        <input type="number" id="price" name="price" value="<%= ticket.price %>">
+        <label for="quantity">Quantity:</label>
+        <input type="number" id="quantity" name="quantity" value="<%= ticket.quantity %>">
+        <!-- Add other input fields for updating other ticket properties -->
+        <button type="submit">Update Ticket</button>
+    </form>
+</body>
+</html>

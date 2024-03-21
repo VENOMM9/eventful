@@ -1,4 +1,4 @@
-import userModel from '../models/user';
+import userModel, { User } from '../models/user'; // Import the User type
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
@@ -19,13 +19,11 @@ class AuthService {
         throw new Error("User already exists");
       }
 
-      const hashedPassword = await bcrypt.hash(password, 10);
-
       const user = await userModel.create({
         first_name: first_name,
         last_name: last_name,
         email: email,
-        password: hashedPassword,
+        password: password,
         country: country,
       });
 
@@ -37,6 +35,7 @@ class AuthService {
 
       return { user, token };
     } catch (error) {
+      console.log(error)
       throw new Error("User creation failed");
     }
   }
@@ -73,6 +72,42 @@ class AuthService {
       return users;
     } catch (error) {
       throw new Error("Failed to fetch users");
+    }
+  }
+
+  public async getUserById(userId: string) {
+    try {
+      const user = await userModel.findById(userId);
+      if (!user) {
+        throw new Error("User not found");
+      }
+      return user;
+    } catch (error) {
+      throw new Error("Failed to fetch user by ID");
+    }
+  }
+
+  public async updateUserById(userId: string, updatedData: Partial<User>) {
+    try {
+      const updatedUser = await userModel.findByIdAndUpdate(userId, updatedData, { new: true });
+      if (!updatedUser) {
+        throw new Error("User not found");
+      }
+      return updatedUser;
+    } catch (error) {
+      throw new Error("Failed to update user");
+    }
+  }
+
+  public async deleteUserById(userId: string) {
+    try {
+      const deletedUser = await userModel.findByIdAndDelete(userId);
+      if (!deletedUser) {
+        throw new Error("User not found");
+      }
+      return deletedUser;
+    } catch (error) {
+      throw new Error("Failed to delete user");
     }
   }
 }

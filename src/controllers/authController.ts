@@ -7,13 +7,13 @@ const login = async (req: Request, res: Response) => {
 
   try {
     const token = await authService.login(email, password);
+    console.log(token)
     res.cookie("token", token, { httpOnly: true, maxAge: 60 * 60 * 1000 });
-    // Render a view instead of returning JSON
-    res.render('loginSuccess', { success: true, message: "Login successful", token: token });
+    // Redirect to dashboard route after successful login
+    res.redirect('/dashboard');
   } catch (error) {
     console.error(error);
-    // Render a view for error handling
-    res.render('error', { success: false, message: "Internal Server Error" });
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
 
@@ -24,23 +24,20 @@ const createUser = async (req: Request, res: Response) => {
     const existingUser = await userModel.findOne({ email: email });
 
     if (existingUser) {
-      // Render a view for user already existing
-      return res.render('userExists', { success: false, message: "User already exists" });
+      return res.status(400).json({ success: false, message: "User already exists" });
     }
 
     const { user, token } = await authService.createUser(first_name, last_name, email, password, country);
 
     console.log("New user created:", user);
     console.log("Token:", token);
-    // Render a view for successful user creation
-    res.render('userCreated', { success: true, message: "User created successfully" });
+    // Redirect to login route after successful user creation
+    res.redirect('/login');
   } catch (error) {
     console.error(error);
-    // Render a view for error handling
-    res.render('error', { success: false, message: "Internal Server Error" });
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
-
 
 
 const getAllUsers = async (req: Request, res: Response) => {
@@ -53,5 +50,40 @@ const getAllUsers = async (req: Request, res: Response) => {
   }
 }
 
+const updateUser = async (req: Request, res: Response) => {
+  const userId = req.params.userId;
+  const updatedData = req.body;
+  try {
+      const updatedUser = await authService.updateUserById(userId, updatedData);
+      res.status(200).json({ success: true, message: "User updated successfully", updatedUser });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ success: false, message: "Failed to update user" });
+  }
+};
 
-export default { login, createUser,  getAllUsers  };
+const getUserById = async (req: Request, res: Response) => {
+  const userId = req.params.userId; // Assuming userId is passed as a route parameter
+  try {
+    const user = await authService.getUserById(userId);
+    res.status(200).json({ user });
+  } catch (error) {
+    console.error(error);
+    res.status(404).json({ message: "User not found" });
+  }
+};
+
+
+const deleteUser = async (req: Request, res: Response) => {
+  const userId = req.params.userId;
+  try {
+      const deletedUser = await authService.deleteUserById(userId);
+      res.status(200).json({ success: true, message: "User deleted successfully", deletedUser });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ success: false, message: "Failed to delete user" });
+  }
+};
+
+
+export default { login, createUser,  getAllUsers, getUserById,  updateUser, deleteUser  };

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Ticket</title>
+</head>
+<body>
+    <h1>Delete Ticket</h1>
+    <p>Are you sure you want to delete this ticket?</p>
+    <p>Ticket ID: <%= ticket._id %></p>
+    <!-- Display other ticket details as needed -->
+    <!-- Example: -->
+    <p>Ticket Name: <%= ticket.ticketName %></p>
+    <form action="/tickets/<%= ticket._id %>" method="POST">
+        <button type="submit">Delete Ticket</button>
+    </form>
+</body>
+</html>

@@ -36,6 +36,8 @@ const ticketSchema = new mongoose_1.Schema({
     eventId: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Event' },
     userId: { type: mongoose_1.Schema.Types.ObjectId, ref: 'User' },
     ticketType: { type: String, enum: Object.values(TicketType) }, // Define ticket type as enum
+    price: { type: Number, required: true },
+    quantity: { type: Number, required: true },
     // Add other fields as needed
 });
 const TicketModel = mongoose_1.default.model('Ticket', ticketSchema);

@@ -3,7 +3,6 @@ import shortid from 'shortid';
 import bcrypt from 'bcrypt';
 
 export interface User extends Document {
-  _id: Types.ObjectId;
   first_name: string;
   last_name: string;
   email: string;
@@ -15,9 +14,7 @@ export interface User extends Document {
 }
 
 const userSchema: Schema<User> = new Schema({
-  _id: {
-    type: Schema.Types.ObjectId,
-  },
+  
   first_name: { type: String, required: true },
   last_name: { type: String, required: true },
   email: {

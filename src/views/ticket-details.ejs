@@ -1,9 +1,10 @@
+<!-- create-ticket.ejs -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>All Events</title>
+    <title>Signup</title>
     <style>
         .navbar {
             background-color: #333; /* Set navbar background color */
@@ -38,22 +39,27 @@
     <nav class="navbar">
         <ul class="nav-list">
             <li class="nav-item"><a href="/" class="nav-link">Home</a></li>
-            <li class="nav-item"><a href="/create-ticket" class="nav-link">Create-Ticket</a></li>
-
-            <li class="nav-item"><a href="/create-event" class="nav-link">Create Events</a></li>
-            <li class="nav-item"><a href="/logout" class="nav-link">Logout</a></li>
+            <li class="nav-item"><a href="/login" class="nav-link">LOGIN</a></li>
         </ul>
-    </nav>
-    <!-- <header><%- include('partials/header') %></header> -->
+    </nav>  
+    <!-- Your navigation bar and other HTML content -->
 
-    <h1>All Events</h1>
-    <!-- Display a list of all events -->
-    <% events.forEach(event => { %>
-        <div>
-            <h2><%= event.title %></h2>
-            <p><%= event.description %></p>
-            <!-- Add more details as needed -->
-        </div>
-    <% }); %>
+    <!-- Display the ticket information -->
+    <h2>Created Ticket Details:</h2>
+    <p>Event ID: <%= ticket.eventId %></p>
+    <p>Ticket Type: <%= ticket.ticketType %></p>
+    <p>Price: <%= ticket.price %></p>
+    <p>Quantity: <%= ticket.quantity %></p>
+
+   
+  
+    <% if (qrCodeURL) { %>
+        <h2>Generated QR Code</h2>
+        <img src="<%= qrCodeURL %>" alt="QR Code">
+    <% } else { %>
+        <p>No QR Code available</p>
+    <% } %>
+
+    <!-- More HTML content if needed -->
 </body>
 </html>

@@ -20,7 +20,9 @@ const authRouter_1 = __importDefault(require("./routes/authRouter"));
 const eventRouter_1 = __importDefault(require("./routes/eventRouter"));
 const ticketRouter_1 = __importDefault(require("./routes/ticketRouter"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
-const event_1 = __importDefault(require("./models/event"));
+const ticketController_1 = require("./controllers/ticketController"); // Importing the ticketController
+const ticket_1 = __importDefault(require("./models/ticket"));
+const event_1 = __importDefault(require("./models/event")); // Import the EventModel
 // import cacheMiddleware from './utils/cache'; // Assuming you've saved the middleware in a file named 'cacheMiddleware.ts'
 const path_1 = __importDefault(require("path"));
 const dotenv_1 = __importDefault(require("dotenv"));
@@ -34,7 +36,6 @@ app.set('views', path_1.default.join(__dirname, 'views'));
 // Serve static files
 app.use(express_1.default.static(path_1.default.join(__dirname, 'public')));
 app.use('/uploads', express_1.default.static(path_1.default.join(__dirname, 'uploads')));
-app.use('/qr-codes', express_1.default.static(path_1.default.join(__dirname, 'utils', 'qr_codes')));
 // Parse incoming request bodies
 app.use(express_1.default.urlencoded({ extended: false }));
 app.use(body_parser_1.default.json());
@@ -51,30 +52,54 @@ app.get('/', (req, res) => {
 app.get('/create-ticket', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // Call the createTicket function from the ticketController to create a new ticket
-        // const ticket = await ticketController.createTicket(req, res);
+        const ticket = yield ticket_1.default.find();
+        const events = yield event_1.default.find();
         // Render the 'create-ticket' view and pass the ticket object
-        res.render('create-ticket', { events: null, ticket: null });
+        res.render('create-ticket', { ticket: ticket, events: events });
     }
     catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal Server Error' });
     }
 }));
+app.get('/tickets', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        // Fetch tickets data from MongoDB using your TicketModel
+        const tickets = yield ticket_1.default.find();
+        console.log(tickets);
+        // Render the tickets page and pass the tickets data to the template
+        res.render('tickets', { tickets: tickets });
+    }
+    catch (error) {
+        // Handle errors
+        console.error('Error fetching tickets:', error);
+        res.status(500).json({ message: 'Failed to fetch tickets' });
+    }
+}));
+app.get('/update-ticket', (req, res) => {
+    res.render('update-ticket'); // Render the 'createevent.ejs' view
+});
+app.get('/delete-ticket', (req, res) => {
+    res.render('delete-ticket'); // Render the 'createevent.ejs' view
+});
 app.get('/create-event', (req, res) => {
     res.render('create-event'); // Render the 'createevent.ejs' view
 });
-app.get('/allevents', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.get('/events', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        // Retrieve events from the database
-        const events = yield event_1.default.find(); // Assuming you're using Mongoose
-        // Render the 'allevents' view and pass the events variable
-        res.render('allevents', { events: events });
+        // Fetch events from the database
+        const events = yield event_1.default.find();
+        // Render the events page and pass the events data to the template
+        res.render('events', { events: events });
     }
     catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Internal Server Error' });
+        // Handle errors
+        console.error('Error fetching events:', error);
+        res.status(500).json({ message: 'Failed to fetch events' });
     }
 }));
+app.get('/dashboard', ticketController_1.getDashboardController);
+app.get('/ticket-details', ticketController_1.getTicketDetailsController);
 // Other routes for rendering views
 app.get('/signup', (req, res) => {
     res.render('signup');
@@ -97,9 +122,9 @@ app.get('/logout', (req, res) => {
     res.redirect('/login');
 });
 // Error handling middleware
+// Error handling middleware
 app.use((err, req, res, next) => {
-    console.error(err.stack);
-    logger_1.default.error(err.stack); // Log the error using the logger
+    logger_1.default.error(`Error occurred: ${err.stack}`);
     res.status(500).send('Something broke!');
 });
 // Start server

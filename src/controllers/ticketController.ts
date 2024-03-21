@@ -1,53 +1,118 @@
 import { Request, Response } from 'express';
-import ticketService from '../services/ticketService';
+import { getAllTickets, createTickets, getTicketById  } from '../services/ticketService';
+import mongoose from 'mongoose';
 import { generateQRCode } from '../utils/QRCodeGenerator';
 import path from 'path';
-import eventService from '../services/eventService';
-import userService from '../services/authService'; // Import the userService
+import TicketModel from '../models/ticket'; // Import the Ticket model
+import EventModel from '../models/event'; // Import the Ticket model
 
-const createTicket = async (req: Request, res: Response) => {
+
+export const createTicketController = async (req: Request, res: Response) => {
   try {
-    // Fetch event and user data from the database
-    const events = await eventService.fetchAllEvents();
-    const users = await userService.getAllUsers();
+    const { userId, ...ticketData } = req.body;
+    console.log(userId)
+    console.log('Ticket Data:', ticketData); // Log ticketData here
 
-    // Generate a QR code for the ticket
-    const ticketData = {
-      eventId: req.body.eventId,
-      userId: req.body.userId,
-      ticketType: req.body.ticketType,
-      price: req.body.price,
-      quantity: req.body.quantity,
-    };
+  
+    // Fetch events data from the database
+    const events = await EventModel.find();
 
-    // Generate a unique filename for the QR code
-    const fileName = `ticket_${Date.now()}.png`;
+    // Create ticket
+    ticketData.userId = userId;
+    const createdTicket = await createTickets(ticketData);
 
-    // Generate the QR code and save it to a file
-    await generateQRCode(JSON.stringify(ticketData), fileName);
+    // Generate QR code and URL
+    const qrCodeData = JSON.stringify(createdTicket);
+    const qrCodeFileName = `ticket_${createdTicket._id}.png`;
+    const qrCodeDirectory = path.join(__dirname, '..', 'public', 'qr_codes');
+    const qrCodeFilePath = path.join(qrCodeDirectory, qrCodeFileName);
+    const  qrCode = await generateQRCode(qrCodeData, qrCodeFilePath);
+    const qrCodeURL = `/qr_codes/${qrCodeFileName}`;
+    console.log(qrCodeFilePath)
+    console.log(qrCode)
+    console.log(qrCodeData)
 
-    // Get the URL for the QR code
-    const qrCodeUrl = `/utils/qr_codes/${fileName}`;
 
-    // Create the ticket in the database
-    const ticket = await ticketService.createTicket(ticketData);
-
-    // Pass event, user, and ticket data to the view for rendering the form
-    return res.render('create-ticket', { events, users, ticket, qrCodeUrl });
+    // Render create-ticket template with data
+    res.render('ticket-details', { events, ticket: createdTicket, qrCodeURL, qrCode });
   } catch (error) {
-    console.error(error);
+    console.error('Error creating ticket:', error);
     res.status(500).json({ message: 'Failed to create ticket' });
   }
 };
 
-const getAllTickets = async (req: Request, res: Response) => {
+export const getTicketDetailsController = async (req: Request, res: Response) => {
   try {
-    const tickets = await ticketService.getAllTickets();
-    res.status(200).json({ tickets });
+    const { ticketId } = req.params;
+    const ticket = await getTicketById(ticketId);
+
+    if (!ticket) {
+      return res.status(404).json({ message: 'Ticket not found' });
+    }
+
+    res.render('ticket-details', { ticket });
   } catch (error) {
-    console.error(error);
+    console.error('Error fetching ticket details:', error);
+    res.status(500).json({ message: 'Failed to fetch ticket details' });
+  }
+};
+
+export const getDashboardController = async (req: Request, res: Response) => {
+  try {
+    // Calculate total tickets sold and total revenue
+    const tickets = await TicketModel.find();
+    const totalTicketsSold = tickets.reduce((acc, ticket) => acc + ticket.quantity, 0);
+    const totalRevenue = tickets.reduce((acc, ticket) => acc + ticket.price * ticket.quantity, 0);
+
+    // Count total events
+    const totalEvents = await EventModel.countDocuments();
+
+    // Render the dashboard view with calculated statistics
+    res.render('dashboard', { totalTicketsSold, totalRevenue, totalEvents });
+  } catch (error) {
+    console.error('Error fetching data for dashboard:', error);
+    res.status(500).json({ message: 'Failed to fetch data for dashboard' });
+  }
+};
+
+export const getAllTicketsController = async (req: Request, res: Response) => {
+  try {
+    const tickets = await getAllTickets();
+    res.render('alltickets', { tickets });
+  } catch (error) {
+    console.error('Error fetching tickets:', error);
     res.status(500).json({ message: 'Failed to fetch tickets' });
   }
 };
 
-export default { createTicket, getAllTickets };
+export const updateTicketController = async (req: Request, res: Response) => {
+  try {
+    const { ticketId } = req.params;
+    const updatedTicket = await TicketModel.findByIdAndUpdate(ticketId, req.body, { new: true });
+
+    if (!updatedTicket) {
+      return res.status(404).json({ message: 'Ticket not found' });
+    }
+
+    res.render('update-ticket', { ticket: updatedTicket });
+  } catch (error) {
+    console.error('Error updating ticket:', error);
+    res.status(500).json({ message: 'Failed to update ticket' });
+  }
+};
+
+export const deleteTicketController = async (req: Request, res: Response) => {
+  try {
+    const { ticketId } = req.params;
+    const deletedTicket = await TicketModel.findByIdAndDelete(ticketId);
+
+    if (!deletedTicket) {
+      return res.status(404).json({ message: 'Ticket not found' });
+    }
+
+    res.render('delete-ticket', { ticket: deletedTicket });
+  } catch (error) {
+    console.error('Error deleting ticket:', error);
+    res.status(500).json({ message: 'Failed to delete ticket' });
+  }
+};

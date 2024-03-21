@@ -27,8 +27,18 @@ const authenticateUser = async (req: Request, res: Response, next: NextFunction)
             throw new Error("Token not found");
         }
 
-        console.log("Token:", token);
+        // Split the token string by space
+        const tokenParts = token.split(' ');
 
+        // Check if tokenParts array has 2 elements (Bearer prefix and token value)
+        if (tokenParts.length !== 2 || tokenParts[0] !== 'Bearer') {
+            throw new Error("Invalid token format");
+        }
+
+        // Extract token value without the prefix
+        token = tokenParts[1];
+        console.log("Token:", token);
+        token.split
         const decoded: any = jwt.verify(token, process.env.JWT_SECRET!);
         req.user = decoded.user;
         req.user_id = decoded.user._id;

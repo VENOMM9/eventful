@@ -38,9 +38,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const userSchema = new mongoose_1.Schema({
-    _id: {
-        type: mongoose_1.Schema.Types.ObjectId,
-    },
     first_name: { type: String, required: true },
     last_name: { type: String, required: true },
     email: {

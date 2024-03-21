@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tickets</title>
+    <link rel="stylesheet" href="/styles.css"> <!-- Link to your CSS file -->
+</head>
+<body>
+    <nav class="navbar">
+        <ul class="nav-list">
+            <li class="nav-item"><a href="/" class="nav-link">EVENTS</a></li>
+            <li class="nav-item"><a href="/" class="nav-link">TICKETS</a></li>
+
+            <li class="nav-item"><a href="/" class="nav-link">CREATE EVENT</a></li>
+
+            <li class="nav-item"><a href="/" class="nav-link">CREATE TICKET</a></li>
+            <li class="nav-item"><a href="/logout" class="nav-link">LOGOUT</a></li>
+        </ul>
+    </nav>  
+    <h1>All Tickets</h1>
+    <div class="tickets-container">
+        <% if (tickets.length > 0) { %>
+            <% tickets.forEach(ticket => { %>
+                <div class="ticket">
+                    <p><strong>Ticket ID:</strong> <%= ticket._id %></p>
+                    <p><strong>Event ID:</strong> <%= ticket.eventId %></p>
+                    <p><strong>User ID:</strong> <%= ticket.userId %></p>
+                    <p><strong>Ticket Type:</strong> <%= ticket.ticketType %></p>
+                    <% if (ticket.price !== undefined) { %>
+                        <p><strong>Price:</strong> $<%= ticket.price.toFixed(2) %></p>
+                    <% } else { %>
+                        <p><strong>Price:</strong> Price Not Available</p>
+                    <% } %>
+                    <p><strong>Quantity:</strong> <%= ticket.quantity %></p>
+
+
+                </div>
+            <% }); %>
+        <% } else { %>
+            <p>No tickets available.</p>
+        <% } %>
+    </div>
+</body>
+</html>
+

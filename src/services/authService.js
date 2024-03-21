@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const user_1 = __importDefault(require("../models/user"));
+const user_1 = __importDefault(require("../models/user")); // Import the User type
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const dotenv_1 = __importDefault(require("dotenv"));
@@ -25,18 +25,18 @@ class AuthService {
                 if (existingUser) {
                     throw new Error("User already exists");
                 }
-                const hashedPassword = yield bcrypt_1.default.hash(password, 10);
                 const user = yield user_1.default.create({
                     first_name: first_name,
                     last_name: last_name,
                     email: email,
-                    password: hashedPassword,
+                    password: password,
                     country: country,
                 });
                 const token = jsonwebtoken_1.default.sign({ user: { first_name: user.first_name, email: user.email, _id: user._id } }, process.env.JWT_SECRET, { expiresIn: "1h" });
                 return { user, token };
             }
             catch (error) {
+                console.log(error);
                 throw new Error("User creation failed");
             }
         });
@@ -68,6 +68,48 @@ class AuthService {
             }
             catch (error) {
                 throw new Error("Failed to fetch users");
+            }
+        });
+    }
+    getUserById(userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const user = yield user_1.default.findById(userId);
+                if (!user) {
+                    throw new Error("User not found");
+                }
+                return user;
+            }
+            catch (error) {
+                throw new Error("Failed to fetch user by ID");
+            }
+        });
+    }
+    updateUserById(userId, updatedData) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const updatedUser = yield user_1.default.findByIdAndUpdate(userId, updatedData, { new: true });
+                if (!updatedUser) {
+                    throw new Error("User not found");
+                }
+                return updatedUser;
+            }
+            catch (error) {
+                throw new Error("Failed to update user");
+            }
+        });
+    }
+    deleteUserById(userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const deletedUser = yield user_1.default.findByIdAndDelete(userId);
+                if (!deletedUser) {
+                    throw new Error("User not found");
+                }
+                return deletedUser;
+            }
+            catch (error) {
+                throw new Error("Failed to delete user");
             }
         });
     }

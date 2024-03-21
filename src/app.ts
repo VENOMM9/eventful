@@ -6,8 +6,10 @@ import authRoute from './routes/authRouter';
 import eventRoute from './routes/eventRouter';
 import ticketRoute from './routes/ticketRouter';
 import cookieParser from 'cookie-parser';
-import EventModel from './models/event';
-import ticketController from './controllers/ticketController'; // Importing the ticketController
+import { getTicketDetailsController, getDashboardController } from './controllers/ticketController'; // Importing the ticketController
+import TicketModel from './models/ticket';
+import  EventModel  from './models/event'; // Import the EventModel
+
 
 // import cacheMiddleware from './utils/cache'; // Assuming you've saved the middleware in a file named 'cacheMiddleware.ts'
 
@@ -29,8 +31,6 @@ app.set('views', path.join(__dirname, 'views'));
 // Serve static files
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-app.use('/qr-codes', express.static(path.join(__dirname, 'utils', 'qr_codes')));
-
 
 // Parse incoming request bodies
 app.use(express.urlencoded({ extended: false }));
@@ -52,31 +52,62 @@ app.get('/', (req: Request, res: Response) => {
 app.get('/create-ticket', async (req: Request, res: Response) => {
   try {
     // Call the createTicket function from the ticketController to create a new ticket
-    // const ticket = await ticketController.createTicket(req, res);
+    const ticket = await TicketModel.find()
+    const events = await EventModel.find()
+
 
     // Render the 'create-ticket' view and pass the ticket object
-    res.render('create-ticket', {events: null, ticket: null});
+    res.render('create-ticket', { ticket: ticket, events: events  });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error' });
   }
 });
+app.get('/tickets', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    // Fetch tickets data from MongoDB using your TicketModel
+    const tickets = await TicketModel.find();
+    console.log(tickets)
+
+    // Render the tickets page and pass the tickets data to the template
+    res.render('tickets', { tickets: tickets });
+  } catch (error) {
+    // Handle errors
+    console.error('Error fetching tickets:', error);
+    res.status(500).json({ message: 'Failed to fetch tickets' });
+  }
+});
+app.get('/update-ticket', (req: Request, res: Response) => {
+  res.render('update-ticket'); // Render the 'createevent.ejs' view
+});
+
+app.get('/delete-ticket', (req: Request, res: Response) => {
+  res.render('delete-ticket'); // Render the 'createevent.ejs' view
+});
+
 app.get('/create-event', (req: Request, res: Response) => {
   res.render('create-event'); // Render the 'createevent.ejs' view
 });
 
-app.get('/allevents', async (req: Request, res: Response) => {
-  try {
-    // Retrieve events from the database
-    const events = await EventModel.find(); // Assuming you're using Mongoose
 
-    // Render the 'allevents' view and pass the events variable
-    res.render('allevents', { events: events });
+app.get('/events', async (req: Request, res: Response) => {
+  try {
+    // Fetch events from the database
+    const events = await EventModel.find();
+
+    // Render the events page and pass the events data to the template
+    res.render('events', { events: events });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal Server Error' });
+    // Handle errors
+    console.error('Error fetching events:', error);
+    res.status(500).json({ message: 'Failed to fetch events' });
   }
 });
+
+
+app.get('/dashboard', getDashboardController);
+app.get('/ticket-details', getTicketDetailsController);
+
 
 // Other routes for rendering views
 app.get('/signup', (req: Request, res: Response) => {
@@ -106,10 +137,11 @@ app.get('/logout', (req: Request, res: Response) => {
 });
 
 // Error handling middleware
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  console.error(err.stack);
-  logger.error(err.stack); // Log the error using the logger
-  res.status(500).send('Something broke!');
+// Error handling middleware
+  app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  
+    logger.error(`Error occurred: ${err.stack}`);
+    res.status(500).send('Something broke!');
 });
 
 // Start server

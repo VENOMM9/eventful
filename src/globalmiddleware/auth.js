@@ -24,7 +24,16 @@ const authenticateUser = (req, res, next) => __awaiter(void 0, void 0, void 0, f
         if (!token) {
             throw new Error("Token not found");
         }
+        // Split the token string by space
+        const tokenParts = token.split(' ');
+        // Check if tokenParts array has 2 elements (Bearer prefix and token value)
+        if (tokenParts.length !== 2 || tokenParts[0] !== 'Bearer') {
+            throw new Error("Invalid token format");
+        }
+        // Extract token value without the prefix
+        token = tokenParts[1];
         console.log("Token:", token);
+        token.split;
         const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
         req.user = decoded.user;
         req.user_id = decoded.user._id;

@@ -12,9 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.fetchAllEvents = exports.createEvent = void 0;
+exports.deleteEventById = exports.putUpdateEvent = exports.fetchAllEvents = exports.getEventById = exports.createEvent = void 0;
 // In eventService.ts
 const event_1 = __importDefault(require("../models/event"));
+// Create a new event
 function createEvent(name, description, date, location) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -28,6 +29,19 @@ function createEvent(name, description, date, location) {
     });
 }
 exports.createEvent = createEvent;
+function getEventById(eventId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const event = yield event_1.default.findById(eventId);
+            return event;
+        }
+        catch (error) {
+            throw new Error('Error fetching event by ID');
+        }
+    });
+}
+exports.getEventById = getEventById;
+// Fetch all events
 function fetchAllEvents() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -40,4 +54,35 @@ function fetchAllEvents() {
     });
 }
 exports.fetchAllEvents = fetchAllEvents;
-exports.default = { createEvent, fetchAllEvents };
+// Update an existing event
+function putUpdateEvent(eventId, updatedData) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const updatedEvent = yield event_1.default.findByIdAndUpdate(eventId, updatedData, { new: true });
+            if (!updatedEvent) {
+                throw new Error('Event not found');
+            }
+            return updatedEvent;
+        }
+        catch (error) {
+            throw new Error('Failed to update event');
+        }
+    });
+}
+exports.putUpdateEvent = putUpdateEvent;
+// Delete an event
+function deleteEventById(eventId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const deletedEvent = yield event_1.default.findByIdAndDelete(eventId);
+            if (!deletedEvent) {
+                throw new Error('Event not found');
+            }
+            return deletedEvent;
+        }
+        catch (error) {
+            throw new Error('Failed to delete event');
+        }
+    });
+}
+exports.deleteEventById = deleteEventById;
