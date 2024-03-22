@@ -3,47 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <style>
-        .navbar {
-            background-color: #333; /* Set navbar background color */
-            padding: 10px; /* Add padding to navbar */
-        }
-    
-        .nav-list {
-            list-style-type: none; /* Remove default list styles */
-            margin: 0;
-            padding: 0;
-            display: flex; /* Make the list items display horizontally */
-        }
-    
-        .nav-item {
-            margin-right: 20px; /* Add spacing between nav items */
-        }
-    
-        .nav-link {
-            text-decoration: none; /* Remove default underline from links */
-            color: #fff; /* Set link color */
-            font-weight: bold; /* Make link text bold */
-        }
-    
-        .nav-link:hover {
-            color: #ffcc00; /* Change link color on hover */
-        }
-    </style>
+    <title>Welcome to EventfulApp</title>
+    <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-    
-    
-    <nav class="navbar">
-        <ul class="nav-list">
-            <li class="nav-item"><a href="/" class="nav-link">Home</a></li>
-            <li class="nav-item"><a href="/login" class="nav-link">LOGIN</a></li>
-            
-            <li class="nav-item"><a href="/signup" class="nav-link">SIGNUP</a></li>
-        </ul>
-    </nav>
-    
-    <h1>hello me</h1>
+    <header class="navbar">
+        <h1>EventfulApp</h1>
+        <!-- Navigation links -->
+       
+    </header>
+
+    <div class="container">
+        <div class="welcome-message">
+            <h2>Welcome to EventfulApp</h2>
+            <p>Your one-stop destination for managing and attending events!</p>
+            <p>Explore upcoming events, buy tickets, and create your own events with EventfulApp.</p>
+        </div>
+
+        <div class="cta-buttons">
+            <a href="/signup" class="cta-button">Sign Up</a>
+            <a href="/login" class="cta-button">Log In</a>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2024 EventfulApp. All rights reserved.</p>
+    </footer>
 </body>
 </html>
