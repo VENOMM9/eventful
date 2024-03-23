@@ -12,6 +12,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.authorizeAdmin = exports.authorizeEventCreator = exports.authorizeEventAttendee = exports.authenticateUser = void 0;
+const user_1 = require("../models/user");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
@@ -45,4 +47,28 @@ const authenticateUser = (req, res, next) => __awaiter(void 0, void 0, void 0, f
         return res.status(302);
     }
 });
-exports.default = authenticateUser;
+exports.authenticateUser = authenticateUser;
+const authorizeAdmin = (req, res, next) => {
+    const user = req.user;
+    if (user.role !== user_1.UserRole.ADMIN) {
+        return res.status(403).json({ message: 'Unauthorized' });
+    }
+    next();
+};
+exports.authorizeAdmin = authorizeAdmin;
+const authorizeEventCreator = (req, res, next) => {
+    const user = req.user;
+    if (user.role !== user_1.UserRole.EVENT_CREATOR && user.role !== user_1.UserRole.ADMIN) {
+        return res.status(403).json({ message: 'Unauthorized' });
+    }
+    next();
+};
+exports.authorizeEventCreator = authorizeEventCreator;
+const authorizeEventAttendee = (req, res, next) => {
+    const user = req.user;
+    if (user.role !== user_1.UserRole.EVENT_CREATOR && user.role !== user_1.UserRole.ADMIN) {
+        return res.status(403).json({ message: 'Unauthorized' });
+    }
+    next();
+};
+exports.authorizeEventAttendee = authorizeEventAttendee;

@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import userModel from '../models/user';
+import {User, UserRole} from '../models/user';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -52,4 +52,28 @@ const authenticateUser = async (req: Request, res: Response, next: NextFunction)
     }
 };
 
-export default authenticateUser;
+
+ const authorizeAdmin = (req: Request, res: Response, next: NextFunction) => {
+    const user = req.user as User;
+    if (user.role !== UserRole.ADMIN) {
+      return res.status(403).json({ message: 'Unauthorized' });
+    }
+    next();
+  };
+  
+  const authorizeEventCreator = (req: Request, res: Response, next: NextFunction) => {
+    const user = req.user as User;
+    if (user.role !== UserRole.EVENT_CREATOR && user.role !== UserRole.ADMIN) {
+      return res.status(403).json({ message: 'Unauthorized' });
+    }
+    next();
+};
+  
+   const authorizeEventAttendee = (req: Request, res: Response, next: NextFunction) => {
+    const user = req.user as User;
+    if (user.role !== UserRole.EVENT_CREATOR && user.role !== UserRole.ADMIN) {
+      return res.status(403).json({ message: 'Unauthorized' });
+    }
+    next();
+  };
+  export { authenticateUser, authorizeEventAttendee, authorizeEventCreator, authorizeAdmin };

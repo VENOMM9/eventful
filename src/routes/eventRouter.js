@@ -10,6 +10,6 @@ const eventRouter = express_1.default.Router();
 eventRouter.post('/create-event', middleware_1.validateCreateEvent, eventController_1.postCreateEvent);
 eventRouter.get('/events', eventController_1.getAllEvents);
 eventRouter.get('/:eventId', eventController_1.getOneEvent); // Route to get a specific event
-eventRouter.put('/:eventId', eventController_1.UpdateEvent); // Route to update an event
+eventRouter.put('/:eventId', eventController_1.updateEvent); // Route to update an event
 eventRouter.delete('/:eventId', eventController_1.deleteEvent); // Route to delete an event
 exports.default = eventRouter;

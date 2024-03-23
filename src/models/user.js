@@ -35,8 +35,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.UserRole = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
+// Define the roles enum
+var UserRole;
+(function (UserRole) {
+    UserRole["ADMIN"] = "admin";
+    UserRole["EVENT_CREATOR"] = "eventCreator";
+    UserRole["ATTENDEE"] = "attendee";
+})(UserRole || (exports.UserRole = UserRole = {}));
 const userSchema = new mongoose_1.Schema({
     first_name: { type: String, required: true },
     last_name: { type: String, required: true },
@@ -53,12 +61,15 @@ const userSchema = new mongoose_1.Schema({
     },
     password: { type: String, required: true },
     country: { type: String, required: true },
-    profilePicture: { type: String }
+    profilePicture: { type: String },
+    role: { type: String, enum: Object.values(UserRole), default: UserRole.ATTENDEE } // Default role is attendee
 });
 // Before save
 userSchema.pre('save', function (next) {
     return __awaiter(this, void 0, void 0, function* () {
         const user = this;
+        if (!user.isModified('password'))
+            return next(); // Skip if password is not modified
         const hash = yield bcrypt_1.default.hash(user.password, 10);
         user.password = hash;
         next();

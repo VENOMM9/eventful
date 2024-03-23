@@ -25,7 +25,16 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
     catch (error) {
         console.error(error);
-        res.status(500).json({ success: false, message: "Internal Server Error" });
+        // Check the error message to determine the type of error
+        if (error === "User not found") {
+            return res.render('usernotfound.ejs');
+        }
+        else if (error === "Invalid credentials") {
+            return res.render('invalidinfo.ejs');
+        }
+        else {
+            return res.status(500).json({ success: false, message: "Internal Server Error" });
+        }
     }
 });
 const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -33,7 +42,7 @@ const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     try {
         const existingUser = yield user_1.default.findOne({ email: email });
         if (existingUser) {
-            return res.status(400).json({ success: false, message: "User already exists" });
+            return res.render('existinguser.ejs');
         }
         const { user, token } = yield authService_1.default.createUser(first_name, last_name, email, password, country);
         console.log("New user created:", user);
