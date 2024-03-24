@@ -14,12 +14,13 @@ const eventService_1 = require("../services/eventService");
 function postCreateEvent(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const { name, description, date, location } = req.body;
-            const event = yield (0, eventService_1.createEvent)(name, description, date, location);
+            const { name, description, date, time, location } = req.body;
+            yield (0, eventService_1.createEvent)(name, description, date, time, location);
             // Redirect to the events route after creating the event
             res.redirect('/events');
         }
         catch (error) {
+            console.error('Error creating event:', error); // Log the full error object
             res.status(500).json({ message: 'Event creation failed' });
         }
     });

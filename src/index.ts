@@ -88,6 +88,14 @@ app.get('/delete-ticket', (req: Request, res: Response) => {
 app.get('/create-event', (req: Request, res: Response) => {
   res.render('create-event'); // Render the 'createevent.ejs' view
 });
+app.get('/unknownevent', (req: Request, res: Response) => {
+  res.render('unknownevent'); // Render the 'createevent.ejs' view
+});
+
+app.get('/existingticket', (req: Request, res: Response) => {
+  res.render('existingticket'); // Render the 'createevent.ejs' view
+});
+
 
 
 app.get('/events', async (req: Request, res: Response) => {

@@ -5,9 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const eventController_1 = require("../controllers/eventController");
-const middleware_1 = require("../middleware/middleware");
 const eventRouter = express_1.default.Router();
-eventRouter.post('/create-event', middleware_1.validateCreateEvent, eventController_1.postCreateEvent);
+eventRouter.post('/create-event', eventController_1.postCreateEvent);
 eventRouter.get('/events', eventController_1.getAllEvents);
 eventRouter.get('/:eventId', eventController_1.getOneEvent); // Route to get a specific event
 eventRouter.put('/:eventId', eventController_1.updateEvent); // Route to update an event

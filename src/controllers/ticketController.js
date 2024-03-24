@@ -31,9 +31,17 @@ const ticket_1 = __importDefault(require("../models/ticket")); // Import the Tic
 const event_1 = __importDefault(require("../models/event")); // Import the Ticket model
 const createTicketController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const _a = req.body, { userId } = _a, ticketData = __rest(_a, ["userId"]);
-        console.log(userId);
-        console.log('Ticket Data:', ticketData); // Log ticketData here
+        const _a = req.body, { userId, eventId } = _a, ticketData = __rest(_a, ["userId", "eventId"]);
+        // Check if the event exists
+        const event = yield event_1.default.findById(eventId);
+        if (!event) {
+            return res.redirect('/unknownevent'); // Redirect to unknown event route
+        }
+        // Check if the ticket for this user and event already exists
+        const existingTicket = yield ticket_1.default.findOne({ userId, eventId });
+        if (existingTicket) {
+            return res.redirect('/existingticket'); // Redirect to existing ticket route
+        }
         // Fetch events data from the database
         const events = yield event_1.default.find();
         // Create ticket
@@ -46,9 +54,6 @@ const createTicketController = (req, res) => __awaiter(void 0, void 0, void 0, f
         const qrCodeFilePath = path_1.default.join(qrCodeDirectory, qrCodeFileName);
         const qrCode = yield (0, QRCodeGenerator_1.generateQRCode)(qrCodeData, qrCodeFilePath);
         const qrCodeURL = `/qr_codes/${qrCodeFileName}`;
-        console.log(qrCodeFilePath);
-        console.log(qrCode);
-        console.log(qrCodeData);
         // Render create-ticket template with data
         res.render('ticket-details', { events, ticket: createdTicket, qrCodeURL, qrCode });
     }
@@ -75,10 +80,12 @@ const getTicketDetailsController = (req, res) => __awaiter(void 0, void 0, void 
 exports.getTicketDetailsController = getTicketDetailsController;
 const getDashboardController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        // Find tickets with non-zero quantity (indicating sold tickets)
+        const soldTickets = yield ticket_1.default.find({ quantity: { $gt: 0 } });
         // Calculate total tickets sold and total revenue
-        const tickets = yield ticket_1.default.find();
-        const totalTicketsSold = tickets.reduce((acc, ticket) => acc + ticket.quantity, 0);
-        const totalRevenue = tickets.reduce((acc, ticket) => acc + ticket.price * ticket.quantity, 0);
+        const totalTicketsSold = soldTickets.reduce((acc, ticket) => acc + ticket.quantity, 0);
+        const totalRevenue = soldTickets.reduce((acc, ticket) => acc + ticket.price * ticket.quantity, 0);
+        console.log(totalRevenue);
         // Count total events
         const totalEvents = yield event_1.default.countDocuments();
         // Render the dashboard view with calculated statistics

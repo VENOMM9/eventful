@@ -16,10 +16,10 @@ exports.deleteEventById = exports.putUpdateEvent = exports.fetchAllEvents = expo
 // In eventService.ts
 const event_1 = __importDefault(require("../models/event"));
 // Create a new event
-function createEvent(name, description, date, location) {
+function createEvent(name, description, date, time, location) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const eventData = { name, description, date, location };
+            const eventData = { name, description, date, time, location };
             const event = yield event_1.default.create(eventData);
             return event;
         }
@@ -46,6 +46,7 @@ function fetchAllEvents() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const events = yield event_1.default.find();
+            console.log(events);
             return events;
         }
         catch (error) {

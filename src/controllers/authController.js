@@ -27,10 +27,10 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         console.error(error);
         // Check the error message to determine the type of error
         if (error === "User not found") {
-            return res.render('usernotfound.ejs');
+            return res.redirect('/unknown');
         }
         else if (error === "Invalid credentials") {
-            return res.render('invalidinfo.ejs');
+            return res.redirect('/invalidinfo');
         }
         else {
             return res.status(500).json({ success: false, message: "Internal Server Error" });

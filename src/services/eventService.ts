@@ -2,9 +2,9 @@
 import EventModel, { Event } from '../models/event';
 
 // Create a new event
-export async function createEvent(name: string, description: string, date: string, location: string): Promise<Event> {
+export async function createEvent(name: string, description: string, date: string, time: string, location: string): Promise<Event> {
   try {
-    const eventData = { name, description, date, location };
+    const eventData = { name, description, date, time, location };
     const event = await EventModel.create(eventData);
     return event;
   } catch (error) {
@@ -25,6 +25,7 @@ export async function getEventById(eventId: string): Promise<Event | null> {
 export async function fetchAllEvents(): Promise<Event[]> {
   try {
     const events = await EventModel.find();
+    console.log(events)
     return events;
   } catch (error) {
     throw new Error('Error fetching events');

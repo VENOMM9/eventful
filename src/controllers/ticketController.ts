@@ -9,11 +9,20 @@ import EventModel from '../models/event'; // Import the Ticket model
 
 export const createTicketController = async (req: Request, res: Response) => {
   try {
-    const { userId, ...ticketData } = req.body;
-    console.log(userId)
-    console.log('Ticket Data:', ticketData); // Log ticketData here
+    const { userId, eventId, ...ticketData } = req.body;
 
-  
+    // Check if the event exists
+    const event = await EventModel.findById(eventId);
+    if (!event) {
+      return res.redirect('/unknownevent'); // Redirect to unknown event route
+    }
+
+    // Check if the ticket for this user and event already exists
+    const existingTicket = await TicketModel.findOne({ userId, eventId });
+    if (existingTicket) {
+      return res.redirect('/existingticket'); // Redirect to existing ticket route
+    }
+
     // Fetch events data from the database
     const events = await EventModel.find();
 
@@ -26,12 +35,8 @@ export const createTicketController = async (req: Request, res: Response) => {
     const qrCodeFileName = `ticket_${createdTicket._id}.png`;
     const qrCodeDirectory = path.join(__dirname, '..', 'public', 'qr_codes');
     const qrCodeFilePath = path.join(qrCodeDirectory, qrCodeFileName);
-    const  qrCode = await generateQRCode(qrCodeData, qrCodeFilePath);
+    const qrCode = await generateQRCode(qrCodeData, qrCodeFilePath);
     const qrCodeURL = `/qr_codes/${qrCodeFileName}`;
-    console.log(qrCodeFilePath)
-    console.log(qrCode)
-    console.log(qrCodeData)
-
 
     // Render create-ticket template with data
     res.render('ticket-details', { events, ticket: createdTicket, qrCodeURL, qrCode });
@@ -40,6 +45,7 @@ export const createTicketController = async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Failed to create ticket' });
   }
 };
+
 
 export const getTicketDetailsController = async (req: Request, res: Response) => {
   try {
@@ -59,11 +65,13 @@ export const getTicketDetailsController = async (req: Request, res: Response) =>
 
 export const getDashboardController = async (req: Request, res: Response) => {
   try {
+    // Find tickets with non-zero quantity (indicating sold tickets)
+    const soldTickets = await TicketModel.find({ quantity: { $gt: 0 } });
+    
     // Calculate total tickets sold and total revenue
-    const tickets = await TicketModel.find();
-    const totalTicketsSold = tickets.reduce((acc, ticket) => acc + ticket.quantity, 0);
-    const totalRevenue = tickets.reduce((acc, ticket) => acc + ticket.price * ticket.quantity, 0);
-
+    const totalTicketsSold = soldTickets.reduce((acc, ticket) => acc + ticket.quantity, 0);
+    const totalRevenue: number = soldTickets.reduce((acc, ticket) => acc + ticket.price * ticket.quantity, 0);
+    console.log(totalRevenue)
     // Count total events
     const totalEvents = await EventModel.countDocuments();
 

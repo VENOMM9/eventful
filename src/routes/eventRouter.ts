@@ -4,7 +4,7 @@ import { validateCreateEvent } from '../middleware/middleware';
 
 const eventRouter = express.Router();
 
-eventRouter.post('/create-event', validateCreateEvent, postCreateEvent);
+eventRouter.post('/create-event',  postCreateEvent);
 eventRouter.get('/events', getAllEvents);
 eventRouter.get('/:eventId', getOneEvent); // Route to get a specific event
 eventRouter.put('/:eventId', updateEvent); // Route to update an event

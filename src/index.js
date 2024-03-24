@@ -85,6 +85,12 @@ app.get('/delete-ticket', (req, res) => {
 app.get('/create-event', (req, res) => {
     res.render('create-event'); // Render the 'createevent.ejs' view
 });
+app.get('/unknownevent', (req, res) => {
+    res.render('unknownevent'); // Render the 'createevent.ejs' view
+});
+app.get('/existingticket', (req, res) => {
+    res.render('existingticket'); // Render the 'createevent.ejs' view
+});
 app.get('/events', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // Fetch events from the database

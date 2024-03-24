@@ -26,10 +26,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 // Define the schema for the Event model
 const eventSchema = new mongoose_1.Schema({
-    title: { type: String, required: true },
+    name: { type: String, required: true },
     description: { type: String, required: true },
     date: { type: Date, required: true },
-    time: { type: String, required: true }, // Add the time field
+    time: { type: String }, // Add the time field
     location: { type: String, required: true }
 });
 // Create and export the Event model

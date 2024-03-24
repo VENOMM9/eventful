@@ -101,6 +101,7 @@ const validateCreateEvent = async (req: Request, res: Response, next: NextFuncti
             title: Joi.string().required(),
             description: Joi.string().required(),
             date: Joi.date().required(),
+           
             location: Joi.string().required(),
             // Add more fields as needed
         });

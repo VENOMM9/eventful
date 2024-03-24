@@ -2,7 +2,7 @@ import mongoose, { Schema, Document } from 'mongoose';
 
 // Define the interface for the Event document
 export interface Event extends Document {
-  title: string;
+  name: string;
   description: string;
   date: Date;
   time: string; // Add the time field
@@ -11,10 +11,10 @@ export interface Event extends Document {
 
 // Define the schema for the Event model
 const eventSchema: Schema<Event> = new Schema({
-  title: { type: String, required: true },
+  name: { type: String, required: true },
   description: { type: String, required: true },
   date: { type: Date, required: true },
-  time: { type: String, required: true }, // Add the time field
+  time: { type: String }, // Add the time field
   location: { type: String, required: true }
 });
 

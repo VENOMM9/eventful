@@ -4,21 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tickets</title>
-    <link rel="stylesheet" href="/styles.css"> <!-- Link to your CSS file -->
+    <link rel="stylesheet" href="/tickets.css"> <!-- Link to your CSS file -->
 </head>
 <body>
     <nav class="navbar">
         <ul class="nav-list">
-            <li class="nav-item"><a href="/events" class="nav-link">EVENTS</a></li>
-            <li class="nav-item"><a href="/tickets" class="nav-link">TICKETS</a></li>
+            <li class="nav-item"><a href="/events" class="nav-link">Events</a></li>
+            <li class="nav-item"><a href="/tickets" class="nav-link">Tickets</a></li>
 
-            <li class="nav-item"><a href="/create-event" class="nav-link">CREATE EVENT</a></li>
+            <li class="nav-item"><a href="/create-event" class="nav-link">Create Events</a></li>
 
-            <li class="nav-item"><a href="/create-ticket" class="nav-link">CREATE TICKET</a></li>
-            <li class="nav-item"><a href="/logout" class="nav-link">LOGOUT</a></li>
+            <li class="nav-item"><a href="/create-ticket" class="nav-link">Create Tickets</a></li>
+            <li class="nav-item"><a href="/logout" class="nav-link">Logout</a></li>
         </ul>
     </nav>  
-    <h1>All Tickets</h1>
+    <h1>&nbsp;&nbsp; All Tickets</h1>
     <div class="tickets-container">
         <% if (tickets.length > 0) { %>
             <% tickets.forEach(ticket => { %>

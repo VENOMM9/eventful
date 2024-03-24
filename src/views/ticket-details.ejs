@@ -4,47 +4,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Signup</title>
+    <title>Create Ticket</title>
+    <link rel="stylesheet" href="/dashboard.css">
+
     <style>
-        .navbar {
-            background-color: #333; /* Set navbar background color */
-            padding: 10px; /* Add padding to navbar */
-        }
-    
-        .nav-list {
-            list-style-type: none; /* Remove default list styles */
-            margin: 0;
-            padding: 0;
-            display: flex; /* Make the list items display horizontally */
-        }
-    
-        .nav-item {
-            margin-right: 20px; /* Add spacing between nav items */
-        }
-    
-        .nav-link {
-            text-decoration: none; /* Remove default underline from links */
-            color: #fff; /* Set link color */
-            font-weight: bold; /* Make link text bold */
-        }
-    
-        .nav-link:hover {
-            color: #ffcc00; /* Change link color on hover */
-        }
+        /* Your CSS styles */
     </style>
 </head>
 <body>
-    
-    
+    <!-- Your navigation bar -->
     <nav class="navbar">
         <ul class="nav-list">
-            <li class="nav-item"><a href="/" class="nav-link">HOME</a></li>
-            <li class="nav-item"><a href="/dashboard" class="nav-link">DASHBOARD</a></li>
-
-            <li class="nav-item"><a href="/login" class="nav-link">LOGIN</a></li>
+            <li class="nav-item"><a href="/" class="nav-link">Home</a></li>
+            <li class="nav-item"><a href="/dashboard" class="nav-link">Dashboard</a></li>
+            <li class="nav-item"><a href="/logout" class="nav-link">Logout</a></li>
         </ul>
-    </nav>  
-    <!-- Your navigation bar and other HTML content -->
+    </nav>
 
     <!-- Display the ticket information -->
     <h2>Created Ticket Details:</h2>
@@ -53,7 +28,14 @@
     <p>Price: <%= ticket.price %></p>
     <p>Quantity: <%= ticket.quantity %></p>
 
-   
+    <!-- Add update and delete functionality -->
+    <div>
+        <!-- Link to the update ticket page -->
+        <a href="/ticket/<%= ticket._id %>">Update Ticket</a>
+
+        <!-- Link to the delete ticket page -->
+        <a href="/ticket/<%= ticket._id %>">Delete Ticket</a>
+    </div>
   
     <% if (qrCodeURL) { %>
         <h2>Generated QR Code</h2>
