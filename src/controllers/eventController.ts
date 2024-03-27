@@ -3,14 +3,15 @@ import { createEvent, fetchAllEvents, getEventById, putUpdateEvent, deleteEventB
 import EventModel, { Event } from '../models/event';
 
 
-export async function postCreateEvent(req: Request, res: Response) {
+
+export async function postCreateEvent(req: Request, res: Response): Promise<void> {
   try {
     const { name, description, date, time, location } = req.body;
-    await createEvent(name, description, date, time, location);
+    const event = await createEvent(name, description, date, time, location);
     // Redirect to the events route after creating the event
     res.redirect('/events');
   } catch (error) {
-    console.error('Error creating event:', error); // Log the full error object
+    console.error('Error creating event:', error);
     res.status(500).json({ message: 'Event creation failed' });
   }
 }

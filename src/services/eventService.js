@@ -15,7 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteEventById = exports.putUpdateEvent = exports.fetchAllEvents = exports.getEventById = exports.createEvent = void 0;
 // In eventService.ts
 const event_1 = __importDefault(require("../models/event"));
-// Create a new event
 function createEvent(name, description, date, time, location) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -24,7 +23,8 @@ function createEvent(name, description, date, time, location) {
             return event;
         }
         catch (error) {
-            throw new Error('Error creating event');
+            console.error(error);
+            throw new Error('Error creating event: ' + error.message);
         }
     });
 }

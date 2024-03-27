@@ -1,14 +1,14 @@
 // In eventService.ts
 import EventModel, { Event } from '../models/event';
 
-// Create a new event
 export async function createEvent(name: string, description: string, date: string, time: string, location: string): Promise<Event> {
   try {
     const eventData = { name, description, date, time, location };
     const event = await EventModel.create(eventData);
     return event;
-  } catch (error) {
-    throw new Error('Error creating event');
+  } catch (error: any) {
+    console.error(error);
+    throw new Error('Error creating event: ' + error.message);
   }
 }
 

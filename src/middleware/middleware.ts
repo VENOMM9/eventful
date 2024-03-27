@@ -98,9 +98,11 @@ const validateCreateEvent = async (req: Request, res: Response, next: NextFuncti
         const schema = Joi.object({
             // Define validation schema for event creation
             // Example:
-            title: Joi.string().required(),
+            name: Joi.string().required(),
             description: Joi.string().required(),
             date: Joi.date().required(),
+            time: Joi.date().required(),
+
            
             location: Joi.string().required(),
             // Add more fields as needed

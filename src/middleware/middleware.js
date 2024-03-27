@@ -109,9 +109,10 @@ const validateCreateEvent = (req, res, next) => __awaiter(void 0, void 0, void 0
         const schema = joi_1.default.object({
             // Define validation schema for event creation
             // Example:
-            title: joi_1.default.string().required(),
+            name: joi_1.default.string().required(),
             description: joi_1.default.string().required(),
             date: joi_1.default.date().required(),
+            time: joi_1.default.date().required(),
             location: joi_1.default.string().required(),
             // Add more fields as needed
         });
